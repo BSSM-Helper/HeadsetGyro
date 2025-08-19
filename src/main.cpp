@@ -2,6 +2,8 @@
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
 
+#define PUBLISH_INTERVAL 2000
+#define EVENT_INTERVAL 200
 Adafruit_MPU6050 mpu;
 
 void setup() {
@@ -23,13 +25,16 @@ void setup() {
 }
 
 void loop() {
-  sensors_event_t a, g, temp;
-  mpu.getEvent(&a, &g, &temp);
-
-  Serial.printf("AccelX: %.2f, AccelY: %.2f, AccelZ: %.2f, ",
+  static sensors_event_t a, g, temp;
+  static uint64_t eventCurrentMillis = millis();
+  static uint64_t publishCurrentMillis = millis();
+  if(eventCurrentMillis - millis() >= EVENT_INTERVAL) mpu.getEvent(&a, &g, &temp);
+  if(publishCurrentMillis - millis() >= PUBLISH_INTERVAL){
+    Serial.printf("AccelX: %.2f, AccelY: %.2f, AccelZ: %.2f, ",
                 a.acceleration.x, a.acceleration.y, a.acceleration.z);
-  Serial.printf("GyroX: %.2f, GyroY: %.2f, GyroZ: %.2f\n",
-                g.gyro.x, g.gyro.y, g.gyro.z);
+    Serial.printf("GyroX: %.2f, GyroY: %.2f, GyroZ: %.2f\n",
+                  g.gyro.x, g.gyro.y, g.gyro.z);
 
-  delay(100);
+    publishCurrentMillis = millis();
+  }
 }
