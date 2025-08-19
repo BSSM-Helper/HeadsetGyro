@@ -11,9 +11,9 @@ void setup() {
   Wire.begin();
   Wire.setClock(400000);
 
-  if (!mpu.begin()) {
+  while (!mpu.begin()) {
     Serial.println("MPU6050 찾을 수 없음!");
-    while (1) delay(10);
+    delay(10);
   }
   Serial.println("MPU6050 연결 성공!");
 
