@@ -28,7 +28,10 @@ void loop() {
   static sensors_event_t a, g, temp;
   static uint64_t eventCurrentMillis = millis();
   static uint64_t publishCurrentMillis = millis();
-  if(eventCurrentMillis - millis() >= EVENT_INTERVAL) mpu.getEvent(&a, &g, &temp);
+  if(eventCurrentMillis - millis() >= EVENT_INTERVAL) {
+    mpu.getEvent(&a, &g, &temp);
+    eventCurrentMillis = millis();
+  }
   if(publishCurrentMillis - millis() >= PUBLISH_INTERVAL){
     Serial.printf("AccelX: %.2f, AccelY: %.2f, AccelZ: %.2f, ",
                 a.acceleration.x, a.acceleration.y, a.acceleration.z);
